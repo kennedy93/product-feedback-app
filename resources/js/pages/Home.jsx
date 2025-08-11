@@ -106,7 +106,7 @@ const Home = () => {
     <div className="max-w-4xl mx-auto">
       {/* Header */}
       <div className="md:flex justify-between items-center mb-8">
-        <div class="mb-6 md:mb-0">
+        <div className="mb-6 md:mb-0">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Product Feedback</h1>
           <p className="text-gray-600">Share your ideas and help us improve our product</p>
         </div>
@@ -192,10 +192,10 @@ const Home = () => {
                     <span className={`px-3 py-1 rounded text-sm font-medium ${getCategoryColor(feedback.category)}`}>
                       {feedback.category}
                     </span>
-                    <span className="text-sm text-gray-500 text-nowrap">
+                    <span className="text-sm text-gray-500">
                       by {feedback.user?.name || 'Unknown User'}
                     </span>
-                    <span className="text-sm text-gray-500 text-nowrap">
+                    <span className="text-sm text-gray-500">
                       {formatDate(feedback.created_at)}
                     </span>
                   </div>

@@ -10,7 +10,9 @@ use App\Http\Controllers\API\CommentMentionController;
 // Public routes
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-ROute::get('/product-feedbacks', [ProductFeedbackController::class, 'index']);
+Route::get('/product-feedbacks', [ProductFeedbackController::class, 'index']);
+Route::get('/product-feedbacks/{productFeedback}', [ProductFeedbackController::class, 'show']);
+Route::get('/product-feedbacks/{productFeedback}/comments', [ProductFeedbackCommentController::class, 'index']);
 
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
@@ -19,12 +21,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout-all', [AuthController::class, 'logoutAll']);
     
     Route::post('/product-feedbacks', [ProductFeedbackController::class, 'store']);
-    Route::get('/product-feedbacks/{productFeedback}', [ProductFeedbackController::class, 'show']);
     Route::put('/product-feedbacks/{productFeedback}', [ProductFeedbackController::class, 'update']);
     Route::delete('/product-feedbacks/{productFeedback}', [ProductFeedbackController::class, 'destroy']);
     
     Route::prefix('product-feedbacks/{productFeedback}')->group(function () {
-        Route::get('comments', [ProductFeedbackCommentController::class, 'index']);
         Route::post('comments', [ProductFeedbackCommentController::class, 'store']);
         Route::get('comments/{comment}', [ProductFeedbackCommentController::class, 'show']);
     });
