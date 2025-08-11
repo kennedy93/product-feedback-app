@@ -293,13 +293,6 @@ const FeedbackDetail = () => {
               
               <div className="mb-4">
                 <RichTextEditor value={newComment} onChange={setNewComment} />
-                {/* <textarea
-                  value={newComment}
-                  onChange={(e) => setNewComment(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-                  rows="4"
-                  placeholder="Write your comment here..."
-                ></textarea> */}
                 <p className="text-gray-500 text-sm mt-1">You can mention users with @username</p>
               </div>
               

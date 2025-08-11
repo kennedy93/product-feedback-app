@@ -18,20 +18,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/logout-all', [AuthController::class, 'logoutAll']);
     
-    // Product Feedback routes
     Route::post('/product-feedbacks', [ProductFeedbackController::class, 'store']);
     Route::get('/product-feedbacks/{productFeedback}', [ProductFeedbackController::class, 'show']);
     Route::put('/product-feedbacks/{productFeedback}', [ProductFeedbackController::class, 'update']);
     Route::delete('/product-feedbacks/{productFeedback}', [ProductFeedbackController::class, 'destroy']);
     
-    // Product Feedback Comments routes (nested under product-feedbacks)
     Route::prefix('product-feedbacks/{productFeedback}')->group(function () {
         Route::get('comments', [ProductFeedbackCommentController::class, 'index']);
         Route::post('comments', [ProductFeedbackCommentController::class, 'store']);
         Route::get('comments/{comment}', [ProductFeedbackCommentController::class, 'show']);
     });
     
-    // Comment Mentions routes
     Route::prefix('mentions')->group(function () {
         Route::get('/', [CommentMentionController::class, 'index']);
         Route::get('/unread', [CommentMentionController::class, 'unread']);

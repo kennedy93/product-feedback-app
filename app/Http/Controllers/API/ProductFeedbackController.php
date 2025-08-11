@@ -1,20 +1,17 @@
 <?php
-
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\ProductFeedback;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
-class ProductFeedbackController extends Controller
-{
+class ProductFeedbackController extends Controller {
     /**
      * Display a listing of the resource.
      */
-    public function index(): JsonResponse
-    {
+    public function index(): JsonResponse {
         $feedbacks = ProductFeedback::with(['user:id,name,email', 'comments.user:id,name,email'])
             ->latest()
             ->paginate(15);
@@ -25,17 +22,16 @@ class ProductFeedbackController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): JsonResponse
-    {
+    public function store(Request $request): JsonResponse {
         try {
             $validated = $request->validate([
-                'title' => 'required|string|max:255',
+                'title'       => 'required|string|max:255',
                 'description' => 'required|string',
-                'category' => 'required|string|max:100',
+                'category'    => 'required|string|max:100',
             ]);
 
             $feedback = ProductFeedback::create([
-                ...$validated,
+                 ...$validated,
                 'user_id' => $request->user()->id,
             ]);
 
@@ -43,13 +39,13 @@ class ProductFeedbackController extends Controller
 
             return response()->json([
                 'message' => 'Product feedback created successfully',
-                'data' => $feedback
+                'data'    => $feedback,
             ], 201);
 
         } catch (ValidationException $e) {
             return response()->json([
                 'message' => 'Validation failed',
-                'errors' => $e->errors()
+                'errors'  => $e->errors(),
             ], 422);
         }
     }
@@ -57,12 +53,11 @@ class ProductFeedbackController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(ProductFeedback $productFeedback): JsonResponse
-    {
+    public function show(ProductFeedback $productFeedback): JsonResponse {
         $productFeedback->load([
             'user:id,name,email',
             'rootComments.user:id,name,email',
-            'rootComments.replies.user:id,name,email'
+            'rootComments.replies.user:id,name,email',
         ]);
 
         return response()->json($productFeedback);
@@ -71,20 +66,19 @@ class ProductFeedbackController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, ProductFeedback $productFeedback): JsonResponse
-    {
+    public function update(Request $request, ProductFeedback $productFeedback): JsonResponse {
         // Check if user owns this feedback
         if ($productFeedback->user_id !== $request->user()->id) {
             return response()->json([
-                'message' => 'Unauthorized'
+                'message' => 'Unauthorized',
             ], 403);
         }
 
         try {
             $validated = $request->validate([
-                'title' => 'sometimes|required|string|max:255',
+                'title'       => 'sometimes|required|string|max:255',
                 'description' => 'sometimes|required|string',
-                'category' => 'sometimes|required|string|max:100',
+                'category'    => 'sometimes|required|string|max:100',
             ]);
 
             $productFeedback->update($validated);
@@ -92,13 +86,13 @@ class ProductFeedbackController extends Controller
 
             return response()->json([
                 'message' => 'Product feedback updated successfully',
-                'data' => $productFeedback
+                'data'    => $productFeedback,
             ]);
 
         } catch (ValidationException $e) {
             return response()->json([
                 'message' => 'Validation failed',
-                'errors' => $e->errors()
+                'errors'  => $e->errors(),
             ], 422);
         }
     }
@@ -106,19 +100,18 @@ class ProductFeedbackController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request, ProductFeedback $productFeedback): JsonResponse
-    {
+    public function destroy(Request $request, ProductFeedback $productFeedback): JsonResponse {
         // Check if user owns this feedback
         if ($productFeedback->user_id !== $request->user()->id) {
             return response()->json([
-                'message' => 'Unauthorized'
+                'message' => 'Unauthorized',
             ], 403);
         }
 
         $productFeedback->delete();
 
         return response()->json([
-            'message' => 'Product feedback deleted successfully'
+            'message' => 'Product feedback deleted successfully',
         ]);
     }
 }

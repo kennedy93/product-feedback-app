@@ -55,8 +55,6 @@ export const api = {
     list: (feedbackId, page = 1) => axios.get(`/api/product-feedbacks/${feedbackId}/comments?page=${page}`),
     get: (feedbackId, commentId) => axios.get(`/api/product-feedbacks/${feedbackId}/comments/${commentId}`),
     create: (feedbackId, data) => axios.post(`/api/product-feedbacks/${feedbackId}/comments`, data),
-    update: (feedbackId, commentId, data) => axios.put(`/api/product-feedbacks/${feedbackId}/comments/${commentId}`, data),
-    delete: (feedbackId, commentId) => axios.delete(`/api/product-feedbacks/${feedbackId}/comments/${commentId}`),
   },
 
   // Mentions endpoints
