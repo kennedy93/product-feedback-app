@@ -24,7 +24,7 @@ A Laravel-based product feedback application that allows users to submit feedbac
 ### 1. Clone the Repository
 
 ```bash
-git clone <your-repository-url>
+git clone https://github.com/kennedy93/product-feedback-app.git
 cd product-feedback-app
 ```
 
