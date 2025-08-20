@@ -20,16 +20,26 @@ class ProductFeedbackCommentController extends Controller
      */
     public function index(Request $request, ProductFeedback $productFeedback): JsonResponse
     {
+        // Recursively eager-load all nested replies
+        $with = $this->getRepliesWith('replies', 10); // 10 levels deep
         $comments = $productFeedback->rootComments()
-            ->with([
-                'user:id,name,email',
-                'replies.user:id,name,email',
-                'replies.replies.user:id,name,email' // Support nested replies
-            ])
+            ->with(array_merge(['user:id,name,email'], $with))
             ->latest()
-            ->paginate(10);
+            ->get();
 
         return ProductFeedbackCommentResource::collection($comments)->response();
+    }
+
+    /**
+     * Helper to build nested with() array for replies recursion.
+     */
+    private function getRepliesWith($relation, $depth)
+    {
+        if ($depth === 0) return [];
+        return [
+            $relation . '.user:id,name,email',
+            ...$this->getRepliesWith($relation . '.replies', $depth - 1)
+        ];
     }
 
     /**
@@ -46,7 +56,7 @@ class ProductFeedbackCommentController extends Controller
             $cleanComment = Sanitizer::sanitizeHtml($validated['comment']);
 
             // Extract mentioned users from comment
-            $mentionedUsers = $this->extractMentions($validated['comment']);
+            $mentionedUsers = $this->extractMentions(strip_tags($validated['comment']));
 
             $comment = ProductFeedbackComment::create([
                 'product_feedback_id' => $productFeedback->id,
@@ -100,16 +110,22 @@ class ProductFeedbackCommentController extends Controller
      */
     private function extractMentions(string $comment): array
     {
-        preg_match_all('/@(\w+)/', $comment, $matches);
-        
+        preg_match_all('/\[([^\[\]]+)\]/u', $comment, $matches);
+
         if (empty($matches[1])) {
             return [];
         }
 
-        // Get user IDs for mentioned usernames
-        $users = User::whereIn('name', $matches[1])->pluck('id')->toArray();
-        
-        return $users;
+        $mentionedUserIds = [];
+        foreach ($matches[1] as $mention) {
+            $mention = trim($mention);
+            $user = User::whereRaw('LOWER(name) = ?', [strtolower($mention)])->first();
+            if ($user) {
+                $mentionedUserIds[] = $user->id;
+            }
+        }
+
+        return $mentionedUserIds;
     }
 
     /**

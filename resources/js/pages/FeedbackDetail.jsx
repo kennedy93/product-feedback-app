@@ -11,6 +11,7 @@ const FeedbackDetail = () => {
   
   const [feedback, setFeedback] = useState(null)
   const [comments, setComments] = useState([])
+  const [totalComments, setTotalComments] = useState(0)
   const [loading, setLoading] = useState(true)
   const [commentsLoading, setCommentsLoading] = useState(false)
   const [error, setError] = useState('')
@@ -46,12 +47,26 @@ const FeedbackDetail = () => {
     try {
       setCommentsLoading(true)
       const response = await api.comments.list(id)
-      setComments(response.data.data || [])
+      const commentList = response.data.data || []
+      setComments(commentList)
+      setTotalComments(countAllComments(commentList))
     } catch (error) {
       console.error('Error fetching comments:', error)
     } finally {
       setCommentsLoading(false)
     }
+  }
+
+  // Recursively count all comments and replies
+  const countAllComments = (commentsArr) => {
+    let count = 0
+    for (const comment of commentsArr) {
+      count += 1
+      if (comment.replies && comment.replies.length > 0) {
+        count += countAllComments(comment.replies)
+      }
+    }
+    return count
   }
 
   const handleSubmitComment = async (e) => {
@@ -83,7 +98,7 @@ const FeedbackDetail = () => {
 
   const handleReply = (comment) => {
     setReplyTo(comment)
-    setNewComment(`@${comment.user?.name} `)
+    setNewComment(`[${comment.user?.name}] `)
   }
 
   const cancelReply = () => {
@@ -258,7 +273,7 @@ const FeedbackDetail = () => {
               ← Back to all feedback
             </Link>
             <span className="text-gray-600 text-sm">
-              {comments.length} {comments.length === 1 ? 'comment' : 'comments'}
+              {totalComments} {totalComments === 1 ? 'comment' : 'comments'}
             </span>
           </div>
         </div>
@@ -293,7 +308,7 @@ const FeedbackDetail = () => {
               
               <div className="mb-4">
                 <RichTextEditor value={newComment} onChange={setNewComment} />
-                <p className="text-gray-500 text-sm mt-1">You can mention users with @username</p>
+                <p className="text-gray-500 text-sm mt-1">You can mention users with [Name]</p>
               </div>
               
               <div className="flex justify-end">

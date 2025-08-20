@@ -132,8 +132,8 @@ const Profile = () => {
                         <span className="font-medium">{mention.mentioned_by_user?.name}</span> mentioned you in a comment on{' '}
                         <span className="font-medium">"{mention.comment?.product_feedback?.title}"</span>
                       </p>
-                      <p className="text-gray-800 text-sm bg-white p-2 rounded border">
-                        {mention.comment?.comment}
+                      <p className="text-gray-800 text-sm bg-white p-2 rounded border" 
+                      dangerouslySetInnerHTML={{ __html: mention.comment?.comment }}>
                       </p>
                     </div>
                     {!mention.is_read && (

@@ -52,7 +52,7 @@ export const api = {
 
   // Comments endpoints
   comments: {
-    list: (feedbackId, page = 1) => axios.get(`/api/product-feedbacks/${feedbackId}/comments?page=${page}`),
+    list: (feedbackId, page = 1) => axios.get(`/api/product-feedbacks/${feedbackId}/comments`),
     get: (feedbackId, commentId) => axios.get(`/api/product-feedbacks/${feedbackId}/comments/${commentId}`),
     create: (feedbackId, data) => axios.post(`/api/product-feedbacks/${feedbackId}/comments`, data),
   },
